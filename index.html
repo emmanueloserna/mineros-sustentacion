@@ -14,6 +14,7 @@ html,body{width:100%;height:100%;position:fixed;overflow:hidden;background:var(-
 .s.on{display:flex}
 .dark{background:radial-gradient(1100px 760px at 86% 8%,rgba(15,90,73,.9),transparent 62%),radial-gradient(900px 700px at 0% 100%,rgba(0,73,60,.55),transparent 60%),var(--g8);color:var(--oat)}
 .oat{background:var(--oat);color:var(--ink)}
+.white{background:radial-gradient(1200px 800px at 50% 45%,#ffffff,#eef1ec);color:var(--ink)}
 .kick{font-weight:600;font-size:22px;letter-spacing:.24em;text-transform:uppercase;color:var(--lime);display:flex;gap:18px;align-items:center}
 .kick b{font-weight:800;color:var(--gold)}
 .oat .kick{color:var(--g7)}.oat .kick b{color:var(--gold2)}
@@ -191,17 +192,30 @@ const foot=(dark=true)=>`<div class="foot"><div class="mk">${logo({word:dark?'#f
 const hb=(rows,max0,thr)=>{const max=max0/.72;return `<div class="bars">${rows.map(r=>`<div class="br ${r.me?'me':''}" data-tip="${r.tip||(r.l+(r.sub?' · '+r.sub:'')+': '+(r.pre||'')+fmt(r.v,r.d??1)+(r.suf||''))}"><div class="lb">${r.l}${r.sub?`<small>${r.sub}</small>`:''}</div><div class="tr"><div class="fl gh" style="width:${r.v/max*100}%"></div><div class="v" style="left:${r.v/max*100}%"><span data-count="${r.v}" data-dec="${r.d??1}" data-pre="${r.pre||''}" data-suf="${r.suf||''}">${r.pre||''}${fmt(r.v,r.d??1)}${r.suf||''}</span></div>${thr&&r.first?`<div class="thr" style="left:${thr.v/max*100}%">${r.first==2?`<span>${thr.l}</span>`:''}</div>`:''}</div></div>`).join('')}</div>`}
 const vb=(cols,max,h=520)=>`<div class="vb" style="height:${h}px">${cols.map(c=>`<div class="c ${c.me?'me':''}" data-tip="${c.tip||(c.l+': '+(c.pre||'')+fmt(c.v,c.d??1)+(c.suf||''))}"><div class="v"><span data-count="${c.v}" data-dec="${c.d??1}" data-pre="${c.pre||''}" data-suf="${c.suf||''}">${c.pre||''}${fmt(c.v,c.d??1)}${c.suf||''}</span></div><div class="fl gv" style="height:${Math.max(c.v/max*(h-110),c.min||0)}px"></div><div class="x">${c.l}${c.sub?`<small>${c.sub}</small>`:''}</div></div>`).join('')}</div>`;
 
+const NS='http://www.w3.org/2000/svg';
 function pins(r){if(r.__pins)return;r.__pins=1;const sv=r.querySelector('#map svg');
-  const ns='http://www.w3.org/2000/svg',add=(x,y,t,s,cls,L)=>{const tx=L?x-11:x+11,an=L?'end':'start';const g=document.createElementNS(ns,'g');g.setAttribute('class','pin '+cls);g.innerHTML=`<circle cx="${x}" cy="${y}" r="5" fill="${cls=='sold'?'none':'#f8d62f'}" stroke="${cls=='sold'?'#f89221':'#152c25'}" stroke-width="${cls=='sold'?2:1.6}" ${cls=='sold'?'stroke-dasharray="2 2"':''}/><text x="${tx}" text-anchor="${an}" y="${y-2}" font-family="Sora" font-weight="700" font-size="13" style="paint-order:stroke" stroke="#152c25" stroke-width="3.5" fill="${cls=='sold'?'#ffb35c':'#faf7f0'}">${t}</text><text x="${tx}" text-anchor="${an}" y="${y+13}" font-family="Sora" font-size="10" style="paint-order:stroke" stroke="#152c25" stroke-width="3" fill="${cls=='sold'?'#ffb35c':'#faf7f0'}" opacity=".75">${s}</text>`;sv.appendChild(g)};
+  const P=r.__pts={};const add0=(k,x,y,...a)=>{P[k]=[x,y];add(x,y,...a)};
+  const ns=NS,add=(x,y,t,s,cls,L)=>{if(cls=='sold'){const g=document.createElementNS(ns,'g');g.setAttribute('class','pin sold');g.innerHTML=`<circle class="gsold" cx="${x}" cy="${y}" r="6" fill="none" stroke="#f89221" stroke-width="2" stroke-dasharray="2.4 2.4"/><circle class="gact" cx="${x}" cy="${y}" r="5" fill="#f8d62f" stroke="#152c25" stroke-width="1.6"/><text class="gt" x="${x+11}" y="${y-2}" font-family="Sora" font-weight="700" font-size="13" style="paint-order:stroke" stroke="#152c25" stroke-width="3.5" fill="#faf7f0">${t}</text><text class="gs" x="${x+11}" y="${y+13}" font-family="Sora" font-size="10" style="paint-order:stroke" stroke="#152c25" stroke-width="3" fill="#ffb35c">${s}</text>`;sv.appendChild(g);return}const tx=L?x-11:x+11,an=L?'end':'start';const g=document.createElementNS(ns,'g');g.setAttribute('class','pin '+cls);g.innerHTML=`<circle cx="${x}" cy="${y}" r="5" fill="${cls=='sold'?'none':'#f8d62f'}" stroke="${cls=='sold'?'#f89221':'#152c25'}" stroke-width="${cls=='sold'?2:1.6}" ${cls=='sold'?'stroke-dasharray="2 2"':''}/><text x="${tx}" text-anchor="${an}" y="${y-2}" font-family="Sora" font-weight="700" font-size="13" style="paint-order:stroke" stroke="#152c25" stroke-width="3.5" fill="${cls=='sold'?'#ffb35c':'#faf7f0'}">${t}</text><text x="${tx}" text-anchor="${an}" y="${y+13}" font-family="Sora" font-size="10" style="paint-order:stroke" stroke="#152c25" stroke-width="3" fill="${cls=='sold'?'#ffb35c':'#faf7f0'}" opacity=".75">${s}</text>`;sv.appendChild(g)};
   const bb=id=>sv.querySelector(id).getBBox();const c=bb('#m-co'),n=bb('#m-ni'),l=bb('#m-cl');
-  add(c.x+c.width*.36,c.y+c.height*.22,'Nechí','Colombia · aluvión','');add(n.x+n.width*.6,n.y+n.height*.35,'Hemco','Nicaragua · 59 %','',1);add(l.x+l.width*.6,l.y+l.height*.16,'La Pepa','Chile · 80 % (2025)','');add(l.x+l.width*1.25,l.y+l.height*.3,'Gualcamayo','Argentina · vendida 2023','sold')}
+  add0('co',c.x+c.width*.36,c.y+c.height*.22,'Nechí','Colombia · aluvión','');add0('ni',n.x+n.width*.6,n.y+n.height*.35,'Hemco','Nicaragua · 59 %','',1);add0('cl',l.x+l.width*.6,l.y+l.height*.16,'La Pepa','Chile · 80 % (2025)','');add0('ar',l.x+l.width*1.25,l.y+l.height*.3,'Gualcamayo','Argentina · vendida 2023','sold')}
+function soldState(r){const g=r.querySelector('.pin.sold');if(!g)return;gsap.set(g.querySelector('.gact'),{attr:{r:0}});gsap.set(g.querySelector('.gsold'),{opacity:1});gsap.set(g.querySelector('.gt'),{attr:{fill:'#ffb35c'}});gsap.set(g.querySelector('.gs'),{opacity:.8})}
+function mapRoutes(r,tl){const sv=r.querySelector('#map svg'),P=r.__pts;sv.querySelectorAll('.route,.mdot,.ring').forEach(e=>e.remove());const first=sv.querySelector('.pin');
+ const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);sv.insertBefore(e,first);return e};
+ const route=(a,b,bx,by)=>el('path',{class:'route',d:`M${a[0]},${a[1]} Q${(a[0]+b[0])/2+bx},${(a[1]+b[1])/2+by} ${b[0]},${b[1]}`,fill:'none',stroke:'#f8d62f','stroke-width':1.8,'stroke-linecap':'round',opacity:.9,filter:'url(#glow)'});
+ const ring=(p,at)=>{const c=el('circle',{class:'ring',cx:p[0],cy:p[1],r:5,fill:'none',stroke:'#f8d62f','stroke-width':2,opacity:0});tl.fromTo(c,{attr:{r:5},opacity:.95},{attr:{r:26},opacity:0,duration:1,ease:'power2.out'},at)};
+ const dot=el('circle',{class:'mdot',r:5,fill:'#fff3b0',filter:'url(#glow)',opacity:0});
+ const travel=(p,at,d)=>{const L=p.getTotalLength();p.style.strokeDasharray=L;p.style.strokeDashoffset=L;tl.to(p,{strokeDashoffset:0,duration:d,ease:'power1.inOut'},at);const o={p:0};tl.set(dot,{opacity:1},at).to(o,{p:1,duration:d,ease:'power1.inOut',onUpdate(){const q=p.getPointAtLength(L*o.p);dot.setAttribute('cx',q.x);dot.setAttribute('cy',q.y)}},at)};
+ const r1=route(P.co,P.ni,-6,-26),r2=route(P.co,P.cl,-120,-10);
+ ring(P.co,1.9);travel(r1,2.1,.9);ring(P.ni,3.0);travel(r2,3.1,1.3);ring(P.cl,4.4);tl.to(dot,{opacity:0,duration:.3},4.5);
+ const g=r.querySelector('.pin.sold');gsap.set(g.querySelector('.gact'),{attr:{r:5}});gsap.set(g.querySelector('.gsold'),{opacity:0});gsap.set(g.querySelector('.gt'),{attr:{fill:'#faf7f0'}});gsap.set(g.querySelector('.gs'),{opacity:0});
+ ring(P.ar,4.7);tl.to(g.querySelector('.gact'),{attr:{r:0},duration:.5,ease:'power2.in'},4.8).to(g.querySelector('.gsold'),{opacity:1,duration:.4},5).to(g.querySelector('.gt'),{attr:{fill:'#ffb35c'},duration:.5},5).to(g.querySelector('.gs'),{opacity:.8,duration:.5},5.1)}
 // ---------- slides ----------
 const SP=[
 {bg:'dark',cover:1,notes:'<b>Portada.</b> “Presentamos la segunda parte del análisis de Mineros S.A., con sus estados consolidados de 2021 a 2025. La comparamos con Aris Mining, la mayor productora de oro de Colombia, y con referencias del sector.”',
  html:`<div class="ph" data-kb style="background-image:url(${IMG.gold});background-position:70% 50%;opacity:.55"></div><div class="shade"></div><canvas class="dust"></canvas>
  <div class="z col" style="height:100%">
   <div class="kick" data-in>Análisis Financiero <b>·</b> EAFIT <b>·</b> Segunda parte</div>
-  <div id="cvlogo" style="margin-top:120px" data-in>${logo({word:'#faf7f0',h:250,id:'cvl'})}</div>
+  <div id="cvlogo" style="margin-top:100px">${logo({word:'#faf7f0',h:290,id:'cvl'})}</div>
   <div style="font-weight:700;font-size:56px;letter-spacing:-.035em;margin-top:40px;line-height:1.1" data-in>Estados consolidados 2021–2025</div>
   <div class="lead" style="margin-top:20px;max-width:1000px" data-in>Frente a <b>Aris Mining</b>, la mayor productora de oro de Colombia, y referencias del sector.</div>
   <div style="margin-top:auto;font-weight:800;font-size:76px;letter-spacing:-.045em;color:var(--gold)" data-in>¿Crece más allá del oro?</div>
@@ -223,12 +237,14 @@ const SP=[
  <div class="grow" style="position:relative"><div id="map" style="position:absolute;right:-40px;top:-50px;height:1000px;width:840px"></div></div>
  </div><div class="src">Mapa: mineros.com.co</div>`,
  build(r){const m=r.querySelector('#map');m.innerHTML=MAP;const sv=m.querySelector('svg');sv.setAttribute('width','100%');sv.setAttribute('height','100%');sv.setAttribute('viewBox','40 0 357 482');
-  sv.querySelectorAll('path').forEach(p=>{const f=p.getAttribute('fill');if(f=='#4BB290')p.setAttribute('fill','#21463b');if(f=='white')p.setAttribute('fill','none')});
-  const L=[...sv.querySelectorAll('path[fill="#CCF895"]')];['ni','co','cl'].forEach((k,i)=>{L[i].id='m-'+k;L[i].setAttribute('fill','#ccf895')});},
- stat(r){pins(r)},
+  sv.insertAdjacentHTML('afterbegin','<defs><linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5343"/><stop offset="1" stop-color="#17352b"/></linearGradient><linearGradient id="hi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eaffcf"/><stop offset="1" stop-color="#a6e05a"/></linearGradient><filter id="relief" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".55"/><feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#ccf895" flood-opacity=".4"/></filter><filter id="lshadow" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity=".45"/></filter><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>');
+  sv.querySelectorAll('path').forEach(p=>{const f=p.getAttribute('fill');if(f=='#4BB290'){p.setAttribute('fill','url(#land)');p.setAttribute('stroke','#10271f');p.setAttribute('stroke-width','.6');p.classList.add('land')}if(f=='white')p.setAttribute('fill','none')});
+  const lg=document.createElementNS(NS,'g');lg.setAttribute('filter','url(#lshadow)');sv.querySelectorAll('path.land').forEach(p=>lg.appendChild(p));sv.insertBefore(lg,sv.querySelector('path'));
+  const L=[...sv.querySelectorAll('path[fill="#CCF895"]')];['ni','co','cl'].forEach((k,i)=>{L[i].id='m-'+k;L[i].setAttribute('fill','url(#hi)');L[i].setAttribute('filter','url(#relief)');L[i].classList.add('hl')});},
+ stat(r){pins(r);soldState(r)},
 
 
- anim(tl,r){pins(r);tl.from(r.querySelectorAll('#map path:not([fill="#ccf895"])'),{opacity:0,duration:.8,stagger:.01},.1).from(r.querySelectorAll('#map path[fill="#ccf895"]'),{opacity:0,scale:.85,transformOrigin:'50% 50%',duration:.7,ease:'back.out(2)',stagger:.25},.5).from(r.querySelectorAll('#map .pin'),{opacity:0,y:-10,duration:.45,stagger:.22,ease:'power3.out'},1.1)}},
+ anim(tl,r){pins(r);tl.from(r.querySelectorAll('#map path.land'),{opacity:0,duration:.8,stagger:.01},.1).from(r.querySelectorAll('#map path.hl'),{opacity:0,scale:.85,transformOrigin:'50% 50%',duration:.7,ease:'back.out(2)',stagger:.25},.5).from(r.querySelectorAll('#map .pin'),{opacity:0,y:-10,duration:.45,stagger:.22,ease:'power3.out'},1.1);mapRoutes(r,tl)}},
 
 {bg:'oat',chapter:['Punto a','Estados financieros','a'],notes:'<b>Estado de resultados.</b> “Se lee de arriba hacia abajo: a los ingresos se les restan costos y gastos hasta llegar a la utilidad neta. Los ingresos pasaron de 1,9 a 3,2 billones de pesos, y la utilidad neta se multiplicó por 3,7. Hay dos años atípicos: 2022, por el deterioro de Gualcamayo, y 2023, por la pérdida de 233.000 millones al venderla.”',
  html:`<div class="kick" data-in>Punto a <b>·</b> Estado de resultados</div>
@@ -403,18 +419,18 @@ const SP=[
   <div class="card" style="flex:1.25;border-color:rgba(248,146,33,.5)" data-in><div class="chip warn"><i>!</i> Riesgos a vigilar</div><ul style="list-style:none;font-size:27px;line-height:1.35;margin-top:22px;display:flex;flex-direction:column;gap:10px"><li>· Impuestos por pagar</li><li>· Exposición al precio del oro</li><li>· Concentración en Nicaragua (59 %)</li></ul></div>
  </div></div>`},
 
-{bg:'oat',end:1,notes:'<b>Fuentes y supuestos.</b> “La base son los estados de EMIS, complementados con fuentes públicas. Los dos supuestos que más pesan son el WACC, que es una estimación actual aplicada a todos los años, y que 2022 todavía incluye a Gualcamayo. Quedamos atentos a sus preguntas.”',
- html:`<canvas class="dust"></canvas><div class="z row" style="height:100%;gap:100px">
- <div class="col" style="flex:1"><div class="kick" data-in>Fuentes y supuestos</div>
-  <div class="t" style="font-size:72px" data-in>Dos supuestos <em>pesan más</em></div>
-  <div class="col" style="gap:24px;margin-top:48px">
-   <div class="card" data-in><div class="unit">1 · El WACC</div><div class="small" style="margin-top:8px">Es una estimación actual aplicada a todos los años.</div></div>
-   <div class="card" data-in><div class="unit">2 · 2022 incluye a Gualcamayo</div><div class="small" style="margin-top:8px">La mina se vendió en 2023.</div></div>
+{bg:'oat',notes:'<b>Fuentes y supuestos.</b> “La base son los estados de EMIS, complementados con fuentes públicas. Los dos supuestos que más pesan son el WACC, que es una estimación actual aplicada a todos los años, y que 2022 todavía incluye a Gualcamayo.”',
+ html:`<div class="kick" data-in>Fuentes y supuestos</div>
+  <div class="t" data-in>Dos supuestos <em>pesan más</em></div>
+  <div class="row mid" style="gap:40px">
+   <div class="card" style="flex:1;padding:48px 52px" data-in><div style="font-weight:800;font-size:140px;line-height:.9;letter-spacing:-.06em;color:var(--me)">01</div><div style="font-weight:700;font-size:44px;letter-spacing:-.03em;margin-top:26px">El WACC</div><div class="lead" style="margin-top:12px">Es una estimación actual aplicada a todos los años.</div></div>
+   <div class="card" style="flex:1;padding:48px 52px" data-in><div style="font-weight:800;font-size:140px;line-height:.9;letter-spacing:-.06em;color:var(--me)">02</div><div style="font-weight:700;font-size:44px;letter-spacing:-.03em;margin-top:26px">2022 incluye a Gualcamayo</div><div class="lead" style="margin-top:12px">La mina se vendió en 2023.</div></div>
   </div>
-  <div class="small" style="margin-top:auto" data-in>Base: estados consolidados de EMIS, complementados con fuentes públicas. Imágenes y logo: mineros.com.co. Trabajo académico para Análisis Financiero (EAFIT); no es material oficial de Mineros S.A.</div>
- </div>
- <div class="col" style="width:760px;align-items:center;justify-content:center;gap:50px">${logo({h:330,id:'endl'})}<div style="font-weight:800;font-size:110px;letter-spacing:-.05em;color:var(--g7)">¿Preguntas?</div></div>
- </div>`},
+  <div class="small" data-in>Base: estados consolidados de EMIS, complementados con fuentes públicas.</div>`},
+
+{bg:'white',end:1,notes:'<b>Cierre.</b> “Quedamos atentos a sus preguntas.”',
+ html:`<div class="col" style="height:100%;align-items:center;justify-content:center">${logo({h:300,id:'endl'})}<div class="endq" style="font-weight:700;font-size:64px;letter-spacing:-.04em;color:var(--g7);margin-top:70px">¿Preguntas?</div></div>
+ <div class="endc" style="position:absolute;left:0;right:0;bottom:46px;text-align:center;font-size:18px;color:rgba(21,44,37,.5)">Trabajo académico para Análisis Financiero (EAFIT). No es material oficial de Mineros S.A. · Imágenes y logo: mineros.com.co</div>`},
 
 {bg:'oat',annex:1,notes:'<b>Anexo.</b> Tabla de datos de las gráficas, tal como aparecen en el guion.',
  html:`<div class="kick">Anexo <b>·</b> Datos de las gráficas</div><div class="t" style="font-size:60px">Las cifras, en tabla</div>
@@ -439,8 +455,32 @@ const mainCount=SP.filter(o=>!o.annex).length;
 SP.forEach((o,i)=>{const d=document.createElement('section');d.className='s '+(o.bg||'');d.innerHTML=o.html+(o.cover||o.end||o.annex?'':foot(o.bg!='oat'));const p=d.querySelector('.pgn');if(p)p.textContent=String(i+1).padStart(2,'0')+' / '+String(mainCount).padStart(2,'0');deck.appendChild(d);o.el=d;if(o.build)o.build(d)});
 
 // ---------- gold dust ----------
-function dust(cv,{n=140,gold=true}={}){const c=cv.getContext('2d');cv.width=1920;cv.height=1080;let P=Array.from({length:n},()=>({x:Math.random()*1920,y:Math.random()*1080,r:Math.random()*2.4+.4,v:Math.random()*.9+.25,a:Math.random()*.7+.2,p:Math.random()*6.28}));let on=true,t=0;
- (function f(){if(!on)return;t+=.01;c.clearRect(0,0,1920,1080);for(const q of P){q.x+=q.v;q.y+=Math.sin(t*2+q.p)*.35-.08;if(q.x>1930){q.x=-10;q.y=Math.random()*1080}const g=c.createRadialGradient(q.x,q.y,0,q.x,q.y,q.r*3);g.addColorStop(0,gold?`rgba(255,226,110,${q.a})`:`rgba(118,201,16,${q.a*.6})`);g.addColorStop(1,'rgba(255,200,40,0)');c.fillStyle=g;c.beginPath();c.arc(q.x,q.y,q.r*3,0,6.28);c.fill()}requestAnimationFrame(f)})();return()=>{on=false}}
+function dust(cv,{n=140,gold=true}={}){const c=cv.getContext('2d');cv.width=1920;cv.height=1080;
+ const sp=document.createElement('canvas');sp.width=sp.height=32;const x=sp.getContext('2d'),g=x.createRadialGradient(16,16,0,16,16,16);
+ if(gold){g.addColorStop(0,'rgba(255,236,150,1)');g.addColorStop(.3,'rgba(255,214,80,.6)');g.addColorStop(1,'rgba(255,200,40,0)')}else{g.addColorStop(0,'rgba(118,201,16,.7)');g.addColorStop(1,'rgba(118,201,16,0)')}x.fillStyle=g;x.fillRect(0,0,32,32);
+ const P=Array.from({length:n},()=>({x:Math.random()*1920,y:Math.random()*1080,r:Math.random()*2.4+.4,v:Math.random()*.9+.25,a:Math.random()*.7+.2,p:Math.random()*6.28,t:null}));
+ const F={p:0};let on=true,t=0;
+ (function f(){if(!on)return;t+=.01;c.clearRect(0,0,1920,1080);const e=F.p;for(const q of P){q.x+=q.v;q.y+=Math.sin(t*2+q.p)*.35-.08;if(q.x>1930){q.x=-10;q.y=Math.random()*1080}let X=q.x,Y=q.y,rr=q.r,a=q.a;if(e>0&&q.t){X+=(q.t[0]-X)*e;Y+=(q.t[1]-Y)*e;rr=rr*(1-.5*e)+.9*e;a+=(1-a)*e}const z=rr*6;c.globalAlpha=a;c.drawImage(sp,X-z/2,Y-z/2,z,z)}c.globalAlpha=1;requestAnimationFrame(f)})();
+ return{stop(){on=false},F,targets(pts){P.forEach((q,i)=>q.t=i<pts.length?pts[i]:null)}}}
+// puntos del diente de león (cabeza + semillas) en coordenadas del escenario
+function logoPoints(svgEl,count){return new Promise(res=>{const rr=svgEl.getBoundingClientRect(),sr=stage.getBoundingClientRect(),k=sr.width/1920;const x0=(rr.left-sr.left)/k,y0=(rr.top-sr.top)/k,w=Math.round(rr.width/k),h=Math.round(rr.height/k);
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 104" width="${w}" height="${h}"><path d="${LOGO.head}"/>${LOGO.seeds.map(d=>`<path d="${d}"/>`).join('')}</svg>`;
+ const im=new Image();im.onload=()=>{const cv=document.createElement('canvas');cv.width=w;cv.height=h;const c=cv.getContext('2d');c.drawImage(im,0,0,w,h);const D=c.getImageData(0,0,w,h).data;const pts=[];for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2)if(D[(y*w+x)*4+3]>110)pts.push([x0+x,y0+y]);for(let i=pts.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[pts[i],pts[j]]=[pts[j],pts[i]]}res(pts.slice(0,count))};im.onerror=()=>res([]);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)})}
+function endSeq(r,tl){const sv=r.querySelector('#endl');const head=sv.querySelector('.lg-head'),seeds=[...sv.querySelectorAll('.lg-s')],word=sv.querySelectorAll('.lg-word path');
+ gsap.set(seeds,{x:0,y:0,rotation:0,opacity:1});
+ tl.fromTo(head,{scale:.6,opacity:0,transformOrigin:'30% 70%'},{scale:1,opacity:1,duration:1,ease:'back.out(1.5)'},.2)
+  .fromTo(seeds,{opacity:0},{opacity:1,duration:.5,stagger:.08},.5)
+  .fromTo(word,{y:30,opacity:0},{y:0,opacity:1,duration:.6,stagger:.04,ease:'power3.out'},.6);
+ seeds.forEach((g,k)=>tl.to(g,{x:700+k*180,y:-260-k*70,rotation:170+k*50,opacity:0,duration:3,ease:'power1.in',transformOrigin:'50% 50%'},1.6+k*.3));
+ tl.call(()=>fly(r,7,false),null,1.8).fromTo(r.querySelector('.endq'),{y:24,opacity:0},{y:0,opacity:1,duration:.7,ease:'power3.out'},2.6).fromTo(r.querySelector('.endc'),{opacity:0},{opacity:1,duration:.8},3)}
+function coverSeq(r,sv,tl,DS){const head=sv.querySelector('.lg-head'),seeds=[...sv.querySelectorAll('.lg-s')],word=sv.querySelectorAll('.lg-word path');
+ gsap.set([head,...seeds,...word],{opacity:0,x:0,y:0,rotation:0});logoPoints(sv,430).then(p=>DS.targets(p));
+ tl.fromTo(DS.F,{p:0},{p:1,duration:2,ease:'power3.inOut'},.25)
+  .fromTo([head,...seeds],{opacity:0,scale:.97,transformOrigin:'30% 60%'},{opacity:1,scale:1,duration:.9,ease:'power2.out'},2.05)
+  .to(DS.F,{p:0,duration:1.9,ease:'power2.inOut'},2.3)
+  .fromTo(word,{y:40,opacity:0},{y:0,opacity:1,duration:.6,stagger:.04,ease:'power3.out'},2.35);
+ seeds.forEach((g,k)=>tl.to(g,{x:520+k*170,y:-170-k*80,rotation:150+k*45,opacity:0,duration:2.8,ease:'power1.in',transformOrigin:'50% 50%'},3.3+k*.25));
+ tl.call(()=>fly(r,12,true),null,3.4)}
 let stopDust=null;
 
 // ---------- seeds blowing from a logo ----------
@@ -455,11 +495,11 @@ addEventListener('resize',fit);fit();
 // ---------- reveal ----------
 let cur=-1,busy=false,tl=null;
 function countUp(el,tl,at){const v=+el.dataset.count,d=+el.dataset.dec||0,pre=el.dataset.pre||'',suf=el.dataset.suf||'';const o={v:0};tl.to(o,{v,duration:1.1,ease:'power2.out',onUpdate(){el.textContent=pre+fmt(o.v,d)+suf}},at)}
-function reveal(o){const r=o.el;if(tl){tl.progress(1);tl.kill()}gsap.killTweensOf(r.querySelectorAll('.lg-s'));if(stopDust){stopDust();stopDust=null}
+function reveal(o){const r=o.el;if(tl){tl.progress(1,true);tl.kill()}gsap.killTweensOf(r.querySelectorAll('.lg-s'));if(stopDust){stopDust();stopDust=null}
  r.querySelectorAll('.fly-seed').forEach(e=>e.remove());
  const cv=r.querySelector('canvas.dust');
- if(PRINT||RM){if(o.stat)o.stat(r);if(cv&&!PRINT)stopDust=dust(cv,{gold:!o.end});return}
- if(cv)stopDust=dust(cv,{gold:!o.end,n:o.end?60:150});
+ if(PRINT||RM){if(o.stat)o.stat(r);if(cv&&!PRINT)stopDust=dust(cv,{gold:!o.end}).stop;return}
+ let DS=null;if(cv){DS=dust(cv,{gold:!o.end,n:o.cover?560:60});stopDust=DS.stop}
  tl=gsap.timeline();
  r.querySelectorAll('[data-in]').forEach((e,k)=>tl.from(e,{y:36,opacity:0,duration:.6,ease:'power3.out',clearProps:'transform,opacity'},.08+k*.09));
  r.querySelectorAll('[data-kb]').forEach(x=>tl.fromTo(x,{scale:1.12},{scale:1,duration:9,ease:'none'},0));
@@ -468,8 +508,8 @@ function reveal(o){const r=o.el;if(tl){tl.progress(1);tl.kill()}gsap.killTweensO
  const gh=r.querySelectorAll('.gh');if(gh.length)tl.from(gh,{scaleX:0,duration:.9,ease:'power4.out',stagger:.14},.45);
  r.querySelectorAll('.vb .v,.br .v').forEach((e,k)=>tl.from(e,{opacity:0,duration:.3},.6+k*.14));
  r.querySelectorAll('[data-count]').forEach((e,k)=>countUp(e,tl,.45+k*.12));
- if(o.cover){blow(r.querySelector('#cvl'),tl,.3);drift(r.querySelector('#cvl'));fly(r,12,true)}
- if(o.end){blow(r.querySelector('#endl'),tl,.4);drift(r.querySelector('#endl'));fly(r,6,false)}
+ if(o.cover&&DS)coverSeq(r,r.querySelector('#cvl'),tl,DS);
+ if(o.end)endSeq(r,tl);
  if(o.anim)o.anim(tl,r)}
 function show(i){SP.forEach(o=>o.el.classList.remove('on'));const o=SP[i];o.el.classList.add('on');cur=i;bar.style.width=(Math.min(i+1,mainCount)/mainCount*100)+'%';notesEl.innerHTML=o.notes||'';history.replaceState(null,'','#'+(i+1));reveal(o)}
 
